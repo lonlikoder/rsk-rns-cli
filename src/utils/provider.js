@@ -8,7 +8,7 @@ export function getProvider(network = 'mainnet') {
     mainnet: 'https://public-node.rsk.co',
     testnet: 'https://public-node.testnet.rsk.co'
   };
-  return new ethers.JsonRpcProvider(urls[network]);
+  return new ethers.providers.JsonRpcProvider(urls[network]);
 }
 
 export function getWallet(provider) {

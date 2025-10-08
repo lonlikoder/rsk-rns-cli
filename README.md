@@ -144,18 +144,54 @@ npm start -- rns:transfer -d mydomain.rsk -o 0x742d35Cc6634C893292Ce8bB6239C002A
 ### Minimum Balances
 
 The tool will automatically check and validate:
-- Sufficient RBTC for gas estimation (3M gas limit)
-- Sufficient RIF for domain registration cost
+- Sufficient RBTC for gas estimation (typically 0.001-0.002 RBTC for both commit and register transactions)
+- Sufficient RIF for domain registration cost (typically 2 RIF for .rsk domains)
+
+### Getting Testnet Tokens
+
+For testing on RSK Testnet:
+
+1. **Get RBTC**: Use the RSK Testnet Faucet - https://faucet.testnet.rsk.co/
+2. **Get RIF**: Use the RIF Testnet Faucet - https://faucet.rif.technology/
+
+**Steps:**
+1. Copy your wallet address (`0x97A881df71Ab6d251837eD99b1f33dF1cc657a73`)
+2. Visit the faucet websites
+3. Paste your address and request tokens
+4. Wait for the transactions to confirm (usually takes a few minutes)
+
+### Mainnet Tokens
+
+For mainnet usage:
+- Purchase RBTC from exchanges
+- Purchase RIF from exchanges that support RSK tokens
+- Ensure you have sufficient balance for both gas and domain registration
 
 ## Error Handling
 
 Common errors and solutions:
 
 - **"PRIVATE_KEY missing"**: Set your private key in `.env` file
-- **"Insufficient RIF balance"**: Add more RIF tokens to your wallet
-- **"Insufficient RBTC balance"**: Add more RBTC for gas fees
+- **"Insufficient RIF balance"**: Add more RIF tokens to your wallet (use faucets for testnet)
+- **"Insufficient RBTC balance"**: Add more RBTC for gas fees (use faucets for testnet)
 - **"Domain not available"**: Choose a different domain name
 - **"Invalid owner address"**: Provide a valid Ethereum address
+- **"Could not fetch RIF balance"**: This usually means your wallet has no RIF tokens
+- **"could not decode result data"**: Typically indicates the RIF token contract call failed due to empty balance
+
+### Troubleshooting Tips
+
+1. **Check your balances first**:
+   ```bash
+   npm start -- rns:register -d test.rsk -n testnet
+   ```
+   The tool will show your RBTC and RIF balances before attempting registration.
+
+2. **Ensure faucet transactions are confirmed** - wait a few minutes after requesting tokens
+
+3. **Verify network settings** - make sure you're using the correct network (testnet/mainnet)
+
+4. **Check domain availability** - some domains may already be registered
 
 ## Development
 

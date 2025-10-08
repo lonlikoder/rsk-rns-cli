@@ -1,7 +1,8 @@
 import { Command } from 'commander';
-import { getProvider, getWallet } from '../utils/provider.js';
-import Web3 from 'web3';
-import RNS from '@rsksmart/rns';
+import pkg from '@rsksmart/rns-sdk';
+const { PartnerRegistrar, RNS } = pkg;
+import { getProvider } from '../utils/provider.js';
+import { ethers } from 'ethers';
 
 const transferCommand = new Command('rns:transfer')
   .description('Transfer ownership of a domain')
@@ -11,39 +12,46 @@ const transferCommand = new Command('rns:transfer')
   .action(async (opts) => {
     try {
       const provider = getProvider(opts.network);
-      const wallet = getWallet(provider);
-      
-      // Initialize RNS - create Web3 provider directly from network URL
-      const urls = {
-        mainnet: 'https://public-node.rsk.co',
-        testnet: 'https://public-node.testnet.rsk.co'
-      };
-      const web3Provider = new Web3.providers.HttpProvider(urls[opts.network]);
-      const web3 = new Web3(web3Provider);
-      web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY);
-      const rns = new RNS(web3);
+      const privateKey = process.env.PRIVATE_KEY;
+      if (!privateKey) {
+        throw new Error('Please set your PRIVATE_KEY in the environment variables.');
+      }
+      const signer = new ethers.Wallet(privateKey, provider);
 
-      // Wait for RNS to compose
-      await rns.compose();
+      // Check if signer is the owner
+      const registryAddress = opts.network === 'mainnet' ? '0x99a12be4c89cbf6cfd11d1f2c029904a7c66cc6dfs' : '0x7d284aaac6e925aad802a53c0c69efe3764597b8';
+      const rns = new RNS(registryAddress, signer);
+      console.log(`Checking ownership of ${opts.domain}...`);
+      const currentOwner = await rns.getOwner(opts.domain);
+
+      if (currentOwner.toLowerCase() !== signer.address.toLowerCase()) {
+        throw new Error(`You are not the owner of ${opts.domain}. Current owner: ${currentOwner}`);
+      }
+      console.log(`✅ Verified: You are the owner of ${opts.domain}`);
+
+      console.log(`Initializing PartnerRegistrar for ${opts.network}...`);
+      const partnerRegistrar = new PartnerRegistrar(signer, opts.network);
+      console.log('PartnerRegistrar initialized successfully');
 
       // Validate the new owner address
-      if (!web3.utils.isAddress(opts.owner)) {
+      if (!ethers.utils.isAddress(opts.owner)) {
         throw new Error('Invalid owner address');
       }
+      console.log(`Validated new owner address: ${opts.owner}`);
 
-      // Transfer the domain using RNS SDK
-      const tx = await rns.setOwner(opts.domain, opts.owner);
+      const label = opts.domain.replace('.rsk', '');
+      console.log(`Transferring ownership of ${opts.domain} (label: ${label}) to ${opts.owner}...`);
 
-      console.log('✅ Domain transferred successfully:', tx.transactionHash);
-      console.log(`📄 Domain: ${opts.domain}`);
-      console.log(`👤 From: ${wallet.address}`);
-      console.log(`👤 To: ${opts.owner}`);
-      
+      // Transfer the domain using PartnerRegistrar
+      const transactionHash = await partnerRegistrar.transfer(label, opts.owner);
+      console.log('✅ Transfer successful!');
+      console.log(`Transaction hash: ${transactionHash}`);
+      console.log(`Domain: ${opts.domain}`);
+      console.log(`Transferred from: ${signer.address}`);
+      console.log(`New owner: ${opts.owner}`);
+
     } catch (err) {
-      console.error('❌ Failed to transfer domain:', err.message);
-      if (err.code === 'UNPREDICTABLE_GAS_LIMIT') {
-        console.error('💡 This might be due to insufficient RIF balance or you are not the owner of the domain');
-      }
+      console.error('❌ Transfer failed:', err.message);
     }
   });
 
