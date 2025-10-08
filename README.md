@@ -1,15 +1,19 @@
 # RSK RNS CLI
 
-A command-line interface tool for interacting with Rootstock Name Service (RNS) on the RSK blockchain. This tool allows you to register and transfer RNS domains easily from your terminal.
+A comprehensive command-line interface tool for interacting with Rootstock Name Service (RNS) on the RSK blockchain. Manage your RNS domains with full lifecycle support including registration, renewal, transfers, and resolver management.
 
 ## Features
 
 - 🔐 **Secure Wallet Integration**: Uses environment variables for private key management
 - 🌐 **Multi-Network Support**: Works with both RSK Mainnet and Testnet
 - 📝 **Domain Registration**: Register new RNS domains with commitment-based registration
-- 🔄 **Domain Transfer**: Transfer ownership of existing RNS domains
+- 🔄 **Domain Transfer**: Transfer ownership of existing RNS domains between addresses
+- 🔄 **Domain Renewal**: Extend registration periods for existing domains
+- 🏷️ **Resolver Management**: Set and get domain resolver addresses
+- 📍 **Address Resolution**: Set resolve domains to wallet addresses and lookup resolutions
 - 💰 **Balance Checks**: Automatically checks RBTC and RIF balances before transactions
 - ⚡ **Gas Estimation**: Estimates gas costs before executing transactions
+- 🔍 **Domain Queries**: Check availability, ownership, resolver, and pricing information
 
 ## Prerequisites
 
@@ -102,6 +106,125 @@ npm start -- rns:transfer -d example.rsk -o 0xNewOwnerAddress -n testnet
 ```bash
 # Transfer domain to new owner on mainnet
 npm start -- rns:transfer -d mydomain.rsk -o 0x742d35Cc6634C893292Ce8bB6239C002Ad8e6b59
+```
+
+#### Renew Domain Registration
+
+Extend the registration period of an existing RNS domain:
+
+```bash
+npm start -- rns:renew -d example.rsk -y 2 -n testnet
+```
+
+**Options:**
+- `-d, --domain <name>`: Domain name to renew - **required**
+- `-y, --years <years>`: Number of years to extend registration - default: `1`
+- `-n, --network <network>`: RSK network (`mainnet` or `testnet`) - default: `mainnet`
+
+**Example:**
+```bash
+# Renew domain for additional 2 years on testnet
+npm start -- rns:renew -d mydomain.rsk -y 2 -n testnet
+```
+
+#### Set Domain Resolution Address
+
+Set the address that a domain resolves to:
+
+```bash
+npm start -- rns:set-addr -d example.rsk -a 0xTargetAddress -n testnet
+```
+
+**Options:**
+- `-d, --domain <name>`: Domain name - **required**
+- `-a, --address <address>`: Target address for resolution - **required**
+- `-n, --network <network>`: RSK network (`mainnet` or `testnet`) - default: `mainnet`
+
+**Example:**
+```bash
+# Set domain to resolve to a specific wallet address
+npm start -- rns:set-addr -d mydomain.rsk -a 0x742d35Cc6634C893292Ce8bB6239C002Ad8e6b59
+```
+
+#### Domain Queries
+
+##### Check Domain Availability
+
+Check if a domain name is available for registration:
+
+```bash
+npm start -- rns:available -d example.rsk -n testnet
+```
+
+**Options:**
+- `-d, --domain <name>`: Domain name to check - **required**
+- `-n, --network <network>`: RSK network (`mainnet` or `testnet`) - default: `mainnet`
+
+##### Get Registration Price
+
+Calculate the cost to register a domain:
+
+```bash
+npm start -- rns:price -d example.rsk -y 1 -n testnet
+```
+
+**Options:**
+- `-d, --domain <name>`: Domain name to check price for - **required**
+- `-y, --years <years>`: Registration duration in years - default: `1`
+- `-n, --network <network>`: RSK network (`mainnet` or `testnet`) - default: `mainnet`
+
+##### Get Domain Owner
+
+Find the current owner of a domain:
+
+```bash
+npm start -- rns:owner -d example.rsk -n testnet
+```
+
+**Options:**
+- `-d, --domain <name>`: Domain name - **required**
+- `-n, --network <network>`: RSK network (`mainnet` or `testnet`) - default: `mainnet`
+
+##### Get Domain Resolver
+
+Find the resolver contract address for a domain:
+
+```bash
+npm start -- rns:resolver -d example.rsk -n testnet
+```
+
+**Options:**
+- `-d, --domain <name>`: Domain name - **required**
+- `-n, --network <network>`: RSK network (`mainnet` or `testnet`) - default: `mainnet`
+
+##### Resolve Domain to Address
+
+Get the address that a domain resolves to:
+
+```bash
+npm start -- rns:resolve -d example.rsk -n testnet
+```
+
+**Options:**
+- `-d, --domain <name>`: Domain name to resolve - **required**
+- `-n, --network <network>`: RSK network (`mainnet` or `testnet`) - default: `mainnet`
+
+**Examples:**
+```bash
+# Check if domain is available
+npm start -- rns:available -d mydomain.rsk -n testnet
+
+# Get registration price for 2 years
+npm start -- rns:price -d mydomain.rsk -y 2 -n testnet
+
+# Find current domain owner
+npm start -- rns:owner -d mydomain.rsk
+
+# Get domain resolver address
+npm start -- rns:resolver -d mydomain.rsk
+
+# Resolve domain to wallet address
+npm start -- rns:resolve -d mydomain.rsk
 ```
 
 ## How It Works
@@ -200,17 +323,25 @@ Common errors and solutions:
 ```
 rsk-rns-cli/
 ├── bin/
-│   └── rsk.js          # CLI entry point
+│   └── rsk.js                    # CLI entry point
 ├── src/
-│   ├── index.js        # Main CLI program
+│   ├── index.js                  # Main CLI program
 │   ├── commands/
-│   │   ├── register.js # Domain registration command
-│   │   └── transfer.js # Domain transfer command
+│   │   ├── register.js          # Domain registration command
+│   │   ├── transfer.js          # Domain transfer command
+│   │   ├── renew.js             # Domain renewal command
+│   │   ├── set-addr.js          # Set domain resolution address
+│   │   ├── resolve.js           # Resolve domain to address
+│   │   ├── available.js         # Check domain availability
+│   │   ├── price.js             # Get domain registration price
+│   │   ├── owner.js             # Get domain owner
+│   │   └── resolver.js          # Get domain resolver address
 │   └── utils/
-│       └── provider.js # Blockchain provider utilities
-├── .env.example        # Environment variables template
-├── package.json        # Project dependencies and scripts
-└── README.md          # This file
+│       └── provider.js          # Blockchain provider utilities
+├── .env.example                  # Environment variables template
+├── package.json                  # Project dependencies and scripts
+├── test.js                       # Test script for RNS operations
+└── README.md                     # This documentation
 ```
 
 ### Dependencies
