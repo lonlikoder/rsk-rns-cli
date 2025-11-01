@@ -72,6 +72,11 @@ Run commands using npm:
 npm start -- [command] [options]
 ```
 
+Or run directly with node:
+```bash
+node bin/rsk.js [command] [options]
+```
+
 ### Commands
 
 #### Register RNS Domains
@@ -349,6 +354,8 @@ rsk-rns-cli/
 │   │   ├── price.js             # Get domain registration price
 │   │   ├── owner.js             # Get domain owner
 │   │   └── resolver.js          # Get domain resolver address
+│   ├── config/
+│   │   └── network.js           # Network configuration utilities
 │   └── utils/
 │       └── provider.js          # Blockchain provider utilities
 ├── .env.example                  # Environment variables template
