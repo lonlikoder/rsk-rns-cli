@@ -39,9 +39,16 @@ npm install
 cp .env.example .env
 ```
 
-4. Edit `.env` file and add your private key:
+4. Create an account at https://rpc.rootstock.io to get API keys for RSK mainnet and testnet
+
+5. Edit `.env` file and add your private key and API keys:
 ```env
+# Wallet private key
 PRIVATE_KEY=your_wallet_private_key_here
+
+# RSK RPC API Keys (get from https://rpc.rootstock.io)
+RSK_MAINNET_API_KEY=your_mainnet_api_key
+RSK_TESTNET_API_KEY=your_testnet_api_key
 ```
 
 ## Usage
@@ -247,15 +254,21 @@ npm start -- rns:resolve -d mydomain.rsk
 
 ## Network Configuration
 
+The CLI now uses Rootstock's RPC API service for improved reliability. You need to obtain API keys from https://rpc.rootstock.io
+
 ### Mainnet
-- RPC URL: `https://public-node.rsk.co`
+- RPC URL: `https://rpc.rootstock.io/{API_KEY}`
+- Registry: `0xcb868aeabd31e2b66f74e9a55cf064abb31a4ad5`
 - RIF Token: `0x2acc95758f8b5f583470ba265eb685a8f45fc1d5`
-- FIFS Registrar: Mainnet address from `@rsksmart/rns-rskregistrar`
+- RSK Owner: `0x45d3e4fb311982a06ba52359d44cb4f5980e0ef1`
+- FIFS Registrar: `0xd9c79ced86ecf49f5e4a973594634c83197c35ab`
 
 ### Testnet
-- RPC URL: `https://public-node.testnet.rsk.co`
+- RPC URL: `https://rpc.testnet.rootstock.io/{API_KEY}`
+- Registry: `0x7d284aaac6e925aad802a53c0c69efe3764597b8`
 - RIF Token: `0x19f64674d8a5b4e652319f5e239efd3bc969a1fe`
-- FIFS Registrar: Testnet address from `@rsksmart/rns-rskregistrar`
+- RSK Owner: `0xca0a477e19bac7e0e172ccfd2e3c28a7200bdb71`
+- FIFS Registrar: `0x90734bd6bf96250a7b262e2bc34284b0d47c1e8d`
 
 ## Requirements
 
@@ -274,8 +287,8 @@ The tool will automatically check and validate:
 
 For testing on RSK Testnet:
 
-1. **Get RBTC**: Use the RSK Testnet Faucet - https://faucet.testnet.rsk.co/
-2. **Get RIF**: Use the RIF Testnet Faucet - https://faucet.rif.technology/
+1. **Get RBTC**: Use the Rootstock Faucet - https://faucet.rootstock.io
+2. **Get RIF**: Use the RIF Faucet - https://faucet.rifos.org
 
 **Steps:**
 1. Copy your wallet address (`0x97A881df71Ab6d251837eD99b1f33dF1cc657a73`)

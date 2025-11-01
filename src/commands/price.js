@@ -3,6 +3,7 @@ import pkg from '@rsksmart/rns-sdk';
 const { RSKRegistrar } = pkg;
 import { ethers, BigNumber } from 'ethers';
 import { getProvider } from '../utils/provider.js';
+import { getNetworkAddress } from '../config/network.js';
 
 const priceCommand = new Command('rns:price')
   .description('Get the price for registering a RNS domain')
@@ -19,9 +20,9 @@ const priceCommand = new Command('rns:price')
       const signer = new ethers.Wallet(privateKey, provider);
 
       // Addresses
-      const rskOwnerAddress = opts.network === 'mainnet' ? '0xd1ee3f08e63b3df20b55d2a30c39b6d8e9b4a861' : '0xca0a477e19bac7e0e172ccfd2e3c28a7200bdb71';
-      const fifsAddrRegistrarAddress = opts.network === 'mainnet' ? '0xb6a45c93a5e8d4f8f2b8b9e0c9d9e6f8a9b0c1d2' : '0x90734bd6bf96250a7b262e2bc34284b0d47c1e8d';
-      const rifTokenAddress = opts.network === 'mainnet' ? '0x2acc95758f8b5f583470ba265eb685a8f45fc1d5' : '0x19f64674d8a5b4e652319f5e239efd3bc969a1fe';
+      const rskOwnerAddress = getNetworkAddress('rskOwner', opts.network);
+      const fifsAddrRegistrarAddress = getNetworkAddress('fifsAddrRegistrar', opts.network);
+      const rifTokenAddress = getNetworkAddress('rifToken', opts.network);
 
       const rskRegistrar = new RSKRegistrar(rskOwnerAddress, fifsAddrRegistrarAddress, rifTokenAddress, signer);
 

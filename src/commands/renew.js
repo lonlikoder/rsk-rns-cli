@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import { getNetworkAddress } from '../config/network.js'
 import pkg from '@rsksmart/rns-sdk';
 const { PartnerRegistrar, RSKRegistrar } = pkg;
 import { ethers, BigNumber } from 'ethers';
@@ -27,7 +28,7 @@ const renewCommand = new Command('rns:renew')
       console.log(`Renewal duration: ${opts.years} years`);
 
       // Get the price
-      const rifTokenAddress = opts.network === 'mainnet' ? '0x2acc95758f8b5f583470ba265eb685a8f45fc1d5' : '0x19f64674d8a5b4e652319f5e239efd3bc969a1fe';
+      const rifTokenAddress = getNetworkAddress('rifToken', opts.network);
       const rifAbi = ['function balanceOf(address) view returns (uint256)'];
       const rifContract = new ethers.Contract(rifTokenAddress, rifAbi, provider);
       const price = await rifContract.balanceOf(signer.address); // Note: actual price logic

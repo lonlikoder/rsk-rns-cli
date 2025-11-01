@@ -1,4 +1,5 @@
 import { Command } from 'commander';
+import { getNetworkAddress } from '../config/network.js'
 import pkg from '@rsksmart/rns-sdk';
 const { PartnerRegistrar, RNS } = pkg;
 import { getProvider } from '../utils/provider.js';
@@ -19,7 +20,7 @@ const transferCommand = new Command('rns:transfer')
       const signer = new ethers.Wallet(privateKey, provider);
 
       // Check if signer is the owner
-      const registryAddress = opts.network === 'mainnet' ? '0x99a12be4c89cbf6cfd11d1f2c029904a7c66cc6dfs' : '0x7d284aaac6e925aad802a53c0c69efe3764597b8';
+      const registryAddress = getNetworkAddress('registry', opts.network);
       const rns = new RNS(registryAddress, signer);
       console.log(`Checking ownership of ${opts.domain}...`);
       const currentOwner = await rns.getOwner(opts.domain);

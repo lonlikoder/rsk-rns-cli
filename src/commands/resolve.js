@@ -3,6 +3,7 @@ import pkg from '@rsksmart/rns-sdk';
 const { AddrResolver } = pkg;
 import { ethers } from 'ethers';
 import { getProvider } from '../utils/provider.js';
+import { getNetworkAddress } from '../config/network.js';
 
 const resolveCommand = new Command('rns:resolve')
   .description('Resolve a domain to its address')
@@ -17,7 +18,7 @@ const resolveCommand = new Command('rns:resolve')
       }
       const signer = new ethers.Wallet(privateKey, provider);
 
-      const registryAddress = opts.network === 'mainnet' ? '0x99a12be4c89cbf6cfd11d1f2c029904a7c66cc6dfs' : '0x7d284aaac6e925aad802a53c0c69efe3764597b8';
+      const registryAddress = getNetworkAddress('registry', opts.network);
       console.log(`Connecting to ${opts.network} network...`);
       console.log(`Resolving domain ${opts.domain} to address...`);
 
